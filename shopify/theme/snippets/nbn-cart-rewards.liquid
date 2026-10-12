@@ -1,0 +1,88 @@
+{% comment %}
+  Nourish by Nature: cart drawer reward bar (free shipping + free gift).
+  Rendered at the top of snippets/cart-form.liquid, so it re-renders every time the cart changes.
+
+  To change the goals:
+  - Free shipping amount comes from Theme settings > Cart > Free shipping amount (currently $75).
+    Keep it the same as the free shipping rate in Settings > Shipping and delivery.
+  - Free gift amount and gift product are set just below.
+{% endcomment %}
+
+{%- liquid
+  assign gift_at = 10000
+  assign gift_handle = 'free-marker-pack-gift'
+  assign gift_name = 'free marker pack'
+
+  assign ship_at = settings.cart_free_shipping_amount | default: 75 | times: 100
+  assign gift_product = all_products[gift_handle]
+  assign gift_variant = gift_product.selected_or_first_available_variant
+
+  assign gift_total = 0
+  for item in cart.items
+    if item.product.handle == gift_handle
+      assign gift_total = gift_total | plus: item.final_line_price
+    endif
+  endfor
+  assign qualifying = cart.total_price | minus: gift_total
+
+  assign pct = qualifying | times: 100 | divided_by: gift_at
+  if pct > 100
+    assign pct = 100
+  endif
+  assign ship_pct = ship_at | times: 100 | divided_by: gift_at
+  assign to_ship = ship_at | minus: qualifying
+  assign to_gift = gift_at | minus: qualifying
+-%}
+
+<style>
+  .nbn-rewards { margin: 0 0 18px; padding: 14px 4px 4px; }
+  .nbn-rewards__msg { margin: 0 0 14px; text-align: center; font-weight: 600; line-height: 1.4; }
+  .nbn-rewards__msg strong { background: #C7E7AF; color: #2B4325; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+  .nbn-rewards__msg.is-celebrating { animation: nbn-pop .5s ease; }
+  .nbn-rewards__bar { position: relative; height: 10px; margin: 0 14px; border-radius: 999px; background: #EEF3E4; }
+  .nbn-rewards__fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: linear-gradient(90deg, #9AD1D4, #7FBF8C 60%, #2B4325); transition: width .6s cubic-bezier(.3,.9,.3,1); }
+  .nbn-rewards__ms { position: absolute; top: 50%; width: 30px; height: 30px; transform: translate(-50%, -50%); display: grid; place-items: center; border-radius: 50%; background: #fff; border: 2px solid #E1E6D6; font-size: 15px; line-height: 1; transition: background .3s, border-color .3s; }
+  .nbn-rewards__ms.is-on { background: #2B4325; border-color: #2B4325; }
+  .nbn-rewards__labels { position: relative; height: 32px; margin: 18px 14px 0; font-size: 11px; font-weight: 600; line-height: 1.25; opacity: .75; }
+  .nbn-rewards__labels span { position: absolute; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+  .nbn-rewards__labels span:last-child { transform: translateX(-85%); }
+  {%- if gift_product != blank %}
+  #site-cart-sidebar [data-product-id="{{ gift_product.id }}"] .cart-item__actions { display: none; }
+  {%- endif %}
+  #site-cart-sidebar cart-recommendations { display: none !important; }
+  @keyframes nbn-pop { 0% { transform: scale(1); } 40% { transform: scale(1.06); } 100% { transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .nbn-rewards__fill, .nbn-rewards__msg { transition: none; animation: none; } }
+</style>
+
+<div class="nbn-rewards hide-if-empty-cart"
+  data-nbn-rewards
+  data-pct="{{ pct }}"
+  data-qualifying="{{ qualifying }}"
+  data-ship-at="{{ ship_at }}"
+  data-gift-at="{{ gift_at }}"
+  data-gift-variant="{{ gift_variant.id }}"
+>
+  <p class="nbn-rewards__msg" aria-live="polite">
+    {%- if qualifying < ship_at -%}
+      You're <strong>{{ to_ship | money }}</strong> away from free shipping 🚚
+    {%- elsif qualifying < gift_at -%}
+      Free shipping unlocked! Add <strong>{{ to_gift | money }}</strong> for a {{ gift_name }} 🎁
+    {%- else -%}
+      You've unlocked it all! Free shipping + a {{ gift_name }} 🎉
+    {%- endif -%}
+  </p>
+  <div class="nbn-rewards__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ pct }}" aria-label="Progress to free gift">
+    <span class="nbn-rewards__fill" style="width: {{ pct }}%"></span>
+    <span class="nbn-rewards__ms {% if qualifying >= ship_at %}is-on{% endif %}" style="left: {{ ship_pct }}%" aria-hidden="true">🚚</span>
+    <span class="nbn-rewards__ms {% if qualifying >= gift_at %}is-on{% endif %}" style="left: 100%" aria-hidden="true">🎁</span>
+  </div>
+  <div class="nbn-rewards__labels" aria-hidden="true">
+    <span style="left: {{ ship_pct }}%">Free shipping<br>{{ ship_at | money_without_trailing_zeros }}</span>
+    <span style="left: 100%">Free gift<br>{{ gift_at | money_without_trailing_zeros }}</span>
+  </div>
+</div>
+
+<script>
+  window.NBN_REWARDS = { giftAt: {{ gift_at }}, giftVariant: {{ gift_variant.id | default: 'null' }} };
+</script>
+<script src="{{ 'nbn-cart-rewards.js' | asset_url }}" defer></script>
