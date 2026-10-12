@@ -99,8 +99,29 @@
     lastQualifying = qualifying;
   };
 
+  // Cart page: re-render the reward bar and slider after the theme updates the cart items.
+  const refreshCartPageExtras = async () => {
+    const box = document.querySelector('[data-nbn-cart-dynamic]');
+    if (!box) return;
+    try {
+      const text = await fetch(`${window.location.pathname}?section_id=${box.dataset.sectionId}`).then(r => r.text());
+      const html = new DOMParser().parseFromString(text, 'text/html');
+      ['[data-nbn-cart-dynamic]', '[data-nbn-cart-head]'].forEach(sel => {
+        const current = document.querySelector(sel);
+        const fresh = html.querySelector(sel);
+        if (current && fresh) current.innerHTML = fresh.innerHTML;
+      });
+      animateBar();
+    } catch (e) {
+      console.warn('[nbn-rewards]', e);
+    }
+  };
+
+  let firstRender = true;
   const onCartRendered = () => {
-    animateBar();
+    if (!firstRender && document.querySelector('[data-nbn-cart-dynamic]')) refreshCartPageExtras();
+    else animateBar();
+    firstRender = false;
     syncGift();
   };
 

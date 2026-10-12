@@ -1,0 +1,142 @@
+{% comment %}
+  Nourish by Nature: cart page.
+  Wraps the theme's own cart items and subtotal (so quantity changes, removal and checkout keep working)
+  in the NBN design, and adds the reward bar and "Little ones also love" slider.
+  The reward bar and slider refresh after every cart change (see assets/nbn-cart-rewards.js).
+{% endcomment %}
+
+{{ 'section-main-cart.css' | asset_url | stylesheet_tag }}
+{{ 'component-cart.css' | asset_url | stylesheet_tag }}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+
+{%- assign gift_product = all_products['free-marker-pack-gift'] -%}
+
+<style>
+  .nbn-cart-page { --nbn-forest: #2B4325; --nbn-leaf: #C7E7AF; --nbn-teal: #9AD1D4; --nbn-butter: #FFF9DA; --nbn-ink: #3d5230; --nbn-italic: #3d8a20;
+    font-family: 'Poppins', sans-serif; background: {{ section.settings.bg_color }}; color: var(--nbn-ink); padding: 44px 40px 64px; }
+  .nbn-cart-page * { box-sizing: border-box; }
+  .nbn-cart-page__inner { max-width: 1240px; margin: 0 auto; }
+
+  .nbn-cart-head { margin-bottom: 28px; }
+  .nbn-cart-eyebrow { display: inline-flex; align-items: center; gap: 6px; background: var(--nbn-leaf); color: var(--nbn-forest); font-size: 11px; font-weight: 800; padding: 6px 16px; border-radius: 20px; margin-bottom: 14px; letter-spacing: .06em; text-transform: uppercase; }
+  .nbn-cart-title { font-size: 40px; font-weight: 900; color: var(--nbn-forest); line-height: 1.15; margin: 0 0 8px; }
+  .nbn-cart-title em { font-style: italic; font-weight: 800; color: var(--nbn-italic); }
+  .nbn-cart-sub { font-size: 16px; font-weight: 500; margin: 0; }
+  .nbn-cart-sub span { font-family: 'Caveat', cursive; font-size: 22px; font-weight: 700; color: var(--nbn-italic); }
+
+  .nbn-cart-grid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 28px; align-items: start; }
+  .nbn-card { background: #fff; border: 2.5px solid var(--nbn-leaf); border-radius: 22px; box-shadow: 6px 6px 0 rgba(43,67,37,.10); }
+
+  /* Reward bar + slider */
+  .nbn-cart-extras { padding: 18px 22px 8px; margin-bottom: 22px; }
+  .nbn-cart-extras .nbn-rewards { margin-bottom: 6px; }
+  .nbn-cart-extras .nbn-upsell { flex-basis: 46%; }
+
+  /* Theme cart items, restyled */
+  .nbn-cart-page .cart-holder.cart-block { background: #fff; border: 2.5px solid var(--nbn-leaf) !important; border-radius: 22px !important; box-shadow: 6px 6px 0 rgba(43,67,37,.10); overflow: hidden; }
+  .nbn-cart-page .cart-block__head { background: var(--nbn-butter); color: var(--nbn-forest); font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+  .nbn-cart-page .cart-form-item { border-color: #EEF3E4; }
+  .nbn-cart-page .cart-item__thumbnail { border-radius: 16px; overflow: hidden; background: var(--nbn-butter); }
+  .nbn-cart-page .cart-item__title { font-weight: 700; color: var(--nbn-forest); font-size: 16px; }
+  .nbn-cart-page .cart-item__price, .nbn-cart-page .cart-item__total { color: var(--nbn-forest); font-weight: 600; }
+  .nbn-cart-page .quantity-selector-holder { border-radius: 999px; border: 2px solid var(--nbn-leaf); }
+  .nbn-cart-page .remove { color: var(--nbn-ink); }
+  {%- if gift_product != blank %}
+  .nbn-cart-page [data-product-id="{{ gift_product.id }}"] .cart__quantity { visibility: hidden; }
+  {%- endif %}
+
+  /* Summary */
+  .nbn-cart-summary { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .nbn-cart-page .cart__subtotal-widget { background: #fff; border: 2.5px solid var(--nbn-forest) !important; border-radius: 22px !important; box-shadow: 6px 6px 0 rgba(43,67,37,.14); padding: 24px; }
+  .nbn-cart-page shipping-notice { display: none; }
+  .nbn-cart-page .cart__total strong { color: var(--nbn-forest); font-weight: 900; }
+  .nbn-cart-page #CheckOut { width: 100%; background: var(--nbn-forest) !important; color: var(--nbn-butter) !important; border: 0 !important; border-radius: 999px !important; font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 17px; padding: 18px 24px; transition: transform .15s, box-shadow .15s; }
+  .nbn-cart-page #CheckOut:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--nbn-leaf); }
+  .nbn-cart-page #CheckOut:focus-visible { outline: 3px solid var(--nbn-teal); outline-offset: 3px; }
+  .nbn-cart-trust { list-style: none; margin: 0; padding: 18px 20px; display: grid; gap: 10px; background: var(--nbn-forest); border-radius: 22px; }
+  .nbn-cart-trust li { display: flex; align-items: center; gap: 10px; color: var(--nbn-leaf); font-size: 13px; font-weight: 700; }
+  .nbn-cart-trust span { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: 50%; background: rgba(199,231,175,.18); font-size: 15px; }
+  .nbn-cart-quote { padding: 18px 20px; background: #b8e8ea; border-color: #7ecbd0; }
+  .nbn-cart-quote p { margin: 0; font-size: 14px; font-weight: 500; line-height: 1.6; color: var(--nbn-forest); }
+  .nbn-cart-quote strong { display: block; margin-top: 6px; font-family: 'Caveat', cursive; font-size: 20px; }
+  .nbn-cart-continue { text-align: center; font-size: 14px; font-weight: 700; color: var(--nbn-forest); text-decoration: underline; }
+
+  /* Empty cart */
+  .nbn-cart-page .cart-section--empty .nbn-cart-summary, .nbn-cart-page .cart-section--empty .nbn-cart-extras { display: none; }
+  .nbn-cart-page .cart-section--empty .nbn-cart-grid { grid-template-columns: minmax(0, 1fr); }
+  .nbn-cart-page .cart-form__items.gutter--regular { padding: 32px; font-size: 16px; font-weight: 600; color: var(--nbn-forest); }
+  .nbn-cart-page .cart-form__items .button--solid { background: var(--nbn-forest) !important; color: var(--nbn-butter) !important; border-radius: 999px !important; font-weight: 800; }
+
+  @media (max-width: 960px) { .nbn-cart-grid { grid-template-columns: minmax(0, 1fr); } .nbn-cart-summary { position: static; } }
+  @media (max-width: 768px) { .nbn-cart-page { padding: 32px 16px 48px; } .nbn-cart-title { font-size: 30px; } .nbn-cart-extras .nbn-upsell { flex-basis: 82%; } }
+</style>
+
+<div class="nbn-cart-page">
+  <div class="nbn-cart-page__inner">
+
+    <div class="nbn-cart-head" data-nbn-cart-head>
+      <div class="nbn-cart-eyebrow">🛒 {{ section.settings.eyebrow }}</div>
+      {%- if cart.item_count > 0 -%}
+        <h1 class="nbn-cart-title">{{ section.settings.heading_line1 }}<br><em>{{ section.settings.heading_line2 }}</em></h1>
+        <p class="nbn-cart-sub">{{ section.settings.subtext }} <span>{{ section.settings.scribble }}</span></p>
+      {%- else -%}
+        <h1 class="nbn-cart-title">{{ section.settings.empty_heading }}<br><em>{{ section.settings.empty_heading_line2 }}</em></h1>
+      {%- endif -%}
+    </div>
+
+    <div class="cart-section {% if cart.items.size == 0 %} cart-section--empty {% endif %}">
+      <div class="nbn-cart-grid">
+
+        <div>
+          <div class="nbn-card nbn-cart-extras" data-nbn-cart-dynamic data-section-id="{{ section.id }}">
+            {%- render 'nbn-cart-rewards' -%}
+            {%- render 'nbn-cart-upsells' -%}
+          </div>
+          {%- render 'cart-form-page' -%}
+        </div>
+
+        <aside class="nbn-cart-summary">
+          {%- render 'cart-subtotal', type: 'page' -%}
+
+          <ul class="nbn-cart-trust">
+            <li><span>🐝</span>Natural beeswax blend</li>
+            <li><span>🌿</span>Food-grade pigments</li>
+            <li><span>🇦🇺</span>Hand-poured in Sydney</li>
+            <li><span>🔒</span>Secure checkout</li>
+          </ul>
+
+          {%- if section.settings.quote != blank -%}
+            <div class="nbn-card nbn-cart-quote">
+              <p>“{{ section.settings.quote }}”</p>
+              {%- if section.settings.quote_name != blank -%}<strong>{{ section.settings.quote_name }}</strong>{%- endif -%}
+            </div>
+          {%- endif -%}
+
+          <a class="nbn-cart-continue" href="{{ routes.all_products_collection_url }}">← Keep shopping</a>
+        </aside>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "NBN Cart Page",
+  "settings": [
+    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#FFF9DA" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow label", "default": "Your cart" },
+    { "type": "text", "id": "heading_line1", "label": "Heading line 1", "default": "Nearly there!" },
+    { "type": "text", "id": "heading_line2", "label": "Heading line 2 (italic green)", "default": "Little hands are going to love this." },
+    { "type": "text", "id": "subtext", "label": "Subtext", "default": "Hand-poured in Sydney and packed by our little family team." },
+    { "type": "text", "id": "scribble", "label": "Handwritten note", "default": "thank you! 💚" },
+    { "type": "text", "id": "empty_heading", "label": "Empty cart heading", "default": "Your cart's having a bath break." },
+    { "type": "text", "id": "empty_heading_line2", "label": "Empty cart heading line 2 (italic green)", "default": "Let's find something colourful 🛁" },
+    { "type": "header", "content": "Customer quote" },
+    { "type": "paragraph", "content": "Paste a real review from a customer. Leave blank to hide." },
+    { "type": "textarea", "id": "quote", "label": "Quote" },
+    { "type": "text", "id": "quote_name", "label": "Name (e.g. Sarah, mum of 2)" }
+  ]
+}
+{% endschema %}

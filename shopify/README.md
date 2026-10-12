@@ -12,7 +12,9 @@ Adds to the slide-out cart drawer:
 | `theme/snippets/nbn-cart-upsells.liquid` | Slider and its suggestion rules |
 | `theme/assets/nbn-cart-rewards.js` | Gift add/remove, slider buttons, bar animation |
 | `theme/snippets/cart-form.liquid` | The theme's drawer file with two `render` lines added (replaces the old single free shipping notice) |
-| `theme/original/cart-form.liquid` | Untouched copy of the theme's drawer file, for rolling back |
+| `theme/sections/nbn-cart-page.liquid` | Cart page in the NBN design. Wraps the theme's own cart items and subtotal, and adds the reward bar, slider, trust strip and an optional customer quote (editable in the theme editor) |
+| `theme/templates/cart.json` | Points the cart page at `nbn-cart-page` |
+| `theme/original/` | Untouched copies of `cart-form.liquid` and `cart.json`, for rolling back |
 
 ## Needs, outside the theme
 - A product with handle `free-marker-pack-gift`, price $0, compare-at $9.95, active on the Online Store.
