@@ -1,0 +1,317 @@
+<title>Nourish Cart Drawer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Nunito:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: strategy notes on the left, a live, clickable cart drawer on the right (stacks on phones) */
+:root{
+  --forest:#2B4325; --leaf:#C7E7AF; --teal:#9AD1D4; --butter:#FFF9DA;
+  --bg:#FFFDF2; --surface:#FFFFFF; --ink:#22311E; --muted:#5E6B58; --line:#E6E8D6;
+  --cta:#2B4325; --cta-ink:#FFF9DA; --pill:#C7E7AF; --pill-ink:#22311E; --track:#EEF3E4;
+  --tealsoft:#E3F3F3; --gold:#B7791F;
+  --display:"Playfair Display", Georgia, serif;
+  --body:"Nunito", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141B12; --surface:#1C2619; --ink:#EEF3E4; --muted:#A9B5A2; --line:#2F3D2A;
+  --cta:#C7E7AF; --cta-ink:#1A2417; --pill:#34502C; --pill-ink:#EEF3E4; --track:#26331F;
+  --tealsoft:#1F3536; --gold:#E3B460; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141B12; --surface:#1C2619; --ink:#EEF3E4; --muted:#A9B5A2; --line:#2F3D2A;
+  --cta:#C7E7AF; --cta-ink:#1A2417; --pill:#34502C; --pill-ink:#EEF3E4; --track:#26331F;
+  --tealsoft:#1F3536; --gold:#E3B460; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.7;padding-inline:16px;padding-block:32px 56px}
+.wrap{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:48px;align-items:start}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}.drawer-col{order:-1}}
+h1,h2,h3{font-family:var(--display);font-weight:500;text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(28px,4vw,40px);color:var(--ink)}
+h2{font-size:22px;margin-top:8px}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:var(--muted)}
+.notes{display:flex;flex-direction:column;gap:28px;min-width:0}
+.lede{max-width:62ch;color:var(--muted);font-size:16.5px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:520px){.stats{grid-template-columns:minmax(0,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat b{display:block;font-family:var(--display);font-size:26px;font-weight:500;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:12px}
+ol.steps,ul.list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;max-width:66ch}
+.ladder{display:grid;grid-template-columns:minmax(0,1fr);gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.rung{display:grid;grid-template-columns:84px minmax(0,1fr);gap:14px;padding:14px 16px;border-top:1px solid var(--line)}
+.rung:first-child{border-top:0}
+.rung .amt{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.rung small{display:block;color:var(--muted);font-size:13.5px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+th,td{text-align:left;padding:10px 14px;border-top:1px solid var(--line);vertical-align:top}
+thead th{border-top:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.save{color:var(--forest);font-weight:800}
+:root:not([data-theme="light"]) .save{color:var(--leaf)}
+:root[data-theme="light"] .save{color:var(--forest)}
+.callout{background:var(--tealsoft);border-radius:14px;padding:16px 18px;max-width:70ch}
+.callout b{font-weight:800}
+
+/* ---------- Drawer mockup ---------- */
+.drawer-col{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);display:flex;flex-direction:column;gap:10px}
+@media (max-width:900px){.drawer-col{position:static}}
+.hint{font-size:13px;color:var(--muted);text-align:center}
+.drawer{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 50px -24px rgba(43,67,37,.45);overflow:hidden;display:flex;flex-direction:column}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.dhead h3{font-size:20px}
+.dhead .x{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);font-size:18px}
+.announce{background:var(--butter);color:#22311E;font-size:13px;font-weight:700;text-align:center;padding:7px 12px}
+.prog{padding:16px 20px 14px;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid var(--line)}
+.prog-msg{font-weight:700;font-size:15px;text-align:center;min-height:26px}
+.prog-msg em{font-style:normal;color:var(--forest);background:var(--leaf);padding:1px 7px;border-radius:999px;font-variant-numeric:tabular-nums}
+.bar{position:relative;height:10px;border-radius:999px;background:var(--track);margin:0 12px}
+.fill{position:absolute;inset:0 auto 0 0;border-radius:999px;background:linear-gradient(90deg,var(--teal),#7FBF8C 60%,#2B4325);width:0;transition:width .5s cubic-bezier(.3,.9,.3,1)}
+.ms{position:absolute;top:50%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:var(--surface);border:2px solid var(--line);display:grid;place-items:center;font-size:15px;transition:all .3s}
+.ms.on{background:var(--forest);border-color:var(--forest);transform:translate(-50%,-50%) scale(1.08)}
+.mslabels{position:relative;height:30px;margin:0 12px;font-size:11.5px;color:var(--muted);font-weight:700}
+.mslabels span{position:absolute;transform:translateX(-50%);text-align:center;line-height:1.25;white-space:nowrap}
+.items{padding:6px 20px;display:flex;flex-direction:column}
+.item{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.thumb{width:56px;height:56px;border-radius:12px;display:grid;place-items:center;font-size:26px}
+.item .name{font-weight:700;font-size:14.5px;line-height:1.35}
+.item .meta{font-size:12.5px;color:var(--muted)}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:999px;margin-top:4px;width:max-content}
+.qty button{width:28px;height:26px;border:0;background:none;color:var(--ink);font-size:16px;cursor:pointer;border-radius:999px}
+.qty span{min-width:18px;text-align:center;font-size:13px;font-weight:700}
+.price{font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
+.price s{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.gift-row .thumb{background:var(--leaf)}
+.free-tag{display:inline-block;background:var(--pill);color:var(--pill-ink);font-size:11px;font-weight:800;letter-spacing:.06em;padding:1px 8px;border-radius:999px;text-transform:uppercase}
+.swap{margin:4px 20px 12px;border:1.5px dashed var(--teal);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--tealsoft)}
+.swap p{font-size:13.5px;line-height:1.45}
+.swap b{font-weight:800}
+.btn{font-family:var(--body);font-weight:800;border:0;border-radius:999px;cursor:pointer;transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.qty button:focus-visible,.card button:focus-visible,.navbtn:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.btn.sm{font-size:13px;padding:7px 14px;background:var(--cta);color:var(--cta-ink)}
+.upsell{padding:14px 0 16px;border-top:1px solid var(--line);background:var(--bg)}
+.uhead{display:flex;justify-content:space-between;align-items:center;padding:0 20px 10px}
+.uhead h4{margin:0;font-family:var(--display);font-weight:500;font-size:17px}
+.navs{display:flex;gap:6px}
+.navbtn{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 20px 6px;scrollbar-width:none}
+.track::-webkit-scrollbar{display:none}
+.card{flex:0 0 72%;scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;align-items:center}
+.card .thumb{width:52px;height:52px}
+.card .t{font-weight:700;font-size:13.5px;line-height:1.3}
+.card .why{font-size:12px;color:var(--muted);line-height:1.35}
+.card .row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:8px}
+.card .row b{font-variant-numeric:tabular-nums}
+.card button{font-family:var(--body);font-weight:800;font-size:12.5px;border:1.5px solid var(--cta);background:transparent;color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
+.foot{padding:16px 20px 18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.sum{display:flex;justify-content:space-between;font-size:14.5px;font-variant-numeric:tabular-nums}
+.sum.total{font-weight:800;font-size:17px}
+.checkout{background:var(--cta);color:var(--cta-ink);font-size:16px;padding:15px;width:100%}
+.trust{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-weight:700}
+.review{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.45}
+.review b{color:var(--gold)}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translate(-50%,20px);background:var(--forest);color:#FFF9DA;padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;transition:all .3s;pointer-events:none;z-index:9}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.reset{align-self:center;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-family:var(--body);font-size:13px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="notes">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span class="eyebrow">Nourish by Nature · Cart &amp; checkout plan</span>
+      <h1>A slide-out cart that gets you from one bath crayon to a free gift</h1>
+      <p class="lede">Most of the upsell happens in the slide-out cart, before anyone reaches checkout. That's where shoppers still feel like browsing, and it's the one place your Shopify Basic plan lets you design freely. Have a play with the live cart on the right 👉</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>$39.35</b><span>Online Store AOV, last 90 days (37 orders)</span></div>
+      <div class="stat"><b>$50</b><span>Recommended free-shipping goal (+$11)</span></div>
+      <div class="stat"><b>$75</b><span>Recommended free-gift goal</span></div>
+    </div>
+
+    <section>
+      <h2>The two-step reward ladder</h2>
+      <p style="max-width:66ch">Most orders right now are one bath product or a crayons-and-rocks pair, sitting around $40. Each goal should be one product away.</p>
+      <div class="ladder">
+        <div class="rung"><span class="amt">$50</span><div><b>Free shipping 🚚</b><small>Sits about 25% above your current AOV. Adding Bath Colour Rocks ($17.95, your best-seller) or a mat ($24.95) gets almost every cart there.</small></div></div>
+        <div class="rung"><span class="amt">$75</span><div><b>Free 8-pack of washable markers 🎁</b><small>Retail value $9.95, so the gift feels real, and it's useful with a mat. If you'd rather keep markers for paying customers, swap in a free printable colouring pack.</small></div></div>
+      </div>
+      <p class="callout"><b>Why two goals and not one:</b> once a mum unlocks free shipping, the bar shouldn't stop there. A second reward a few dollars away keeps her adding. Show the next goal straight away ("Yay, free shipping! Add $10.15 for a free marker pack").</p>
+    </section>
+
+    <section>
+      <h2>What goes in the cart, top to bottom</h2>
+      <ol class="steps">
+        <li><b>Progress bar first.</b> It sits above the items so it's the first thing she reads. One line of copy that always names the exact dollar gap.</li>
+        <li><b>Cart items</b>, with the free gift auto-added as a line item marked <span class="free-tag">Free</span> and the $9.95 crossed out. Seeing the value makes it stick.</li>
+        <li><b>Bundle swap prompt.</b> When the cart holds items that make up a bundle, offer the bundle as a one-tap swap. It's an honest saving and a higher-value product.</li>
+        <li><b>"Little ones also love" slider.</b> 3–4 swipeable cards that change with the cart, each with a one-tap Add button. No leaving the drawer.</li>
+        <li><b>Sticky footer</b>: subtotal, a big Forest Green checkout button, Sydney-made trust badges and one short review.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Smart upsell rules</h2>
+      <div class="tbl"><table>
+        <thead><tr><th>If the cart has…</th><th>Show…</th><th>Why it works</th></tr></thead>
+        <tbody>
+          <tr><td>Bath Crayons + Colour Rocks</td><td>Swap to <b>Bath Artistry Kit</b> $36.95</td><td><span class="save">Saves $2.95</span>, and the kit comes in a gift box</td></tr>
+          <tr><td>Eco Crayons + Bath Crayons</td><td>Swap to <b>Beeswax Crayon Bundle</b> $34.95</td><td><span class="save">Saves $2.95</span></td></tr>
+          <tr><td>Any Seek N Spot mat</td><td>Replacement Pens $9.95, then a second mat design</td><td>Markers go missing down the couch. Every parent knows</td></tr>
+          <tr><td>Bath products only</td><td>A Seek N Spot mat</td><td>Creative play for out of the bath too, and clears $50</td></tr>
+          <tr><td>Paper crayons only</td><td>Bee-Long Crayons or a mat</td><td>Award runner-up, natural pairing</td></tr>
+          <tr><td>Cart over $75</td><td>Colourful Adventure kit $44.95</td><td>Gift buyers, Christmas season</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section>
+      <h2>Copy for the progress bar</h2>
+      <ul class="list">
+        <li><b>Under $50:</b> "You're $10.10 away from free shipping 🚚"</li>
+        <li><b>$50–$75:</b> "Free shipping unlocked! Add $10.15 for a free marker pack 🎁"</li>
+        <li><b>$75+:</b> "You've unlocked it all! Free shipping + free markers 🎉 Little hands are sorted."</li>
+        <li><b>Announcement strip:</b> "Hand-poured in Sydney · Orders before 2pm ship same day"</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>How to build it on your Shopify plan</h2>
+      <ul class="list">
+        <li><b>The checkout page itself can't be redesigned on Shopify Basic.</b> Adding upsells or blocks inside the Information, Shipping and Payment steps needs Shopify Plus. That's why the design above lives in the slide-out cart.</li>
+        <li><b>Cart drawer app:</b> UpCart, Kaching Cart or Rebuy Smart Cart all do the progress bar with tiers, the auto-added gift, and the rules-based slider. UpCart is the easiest to set up and the cheapest.</li>
+        <li><b>Free shipping:</b> set it in Shopify (Settings → Shipping, free rate on orders over $50) so it applies at checkout and isn't only a cart-drawer promise.</li>
+        <li><b>Free gift:</b> make a $0 "Free Marker Pack" variant (hidden from search) and have the app auto-add it at $75 and remove it if the cart drops below.</li>
+        <li><b>After checkout:</b> a one-click post-purchase offer (e.g. AfterSell) works on every plan. Offer Replacement Pens or a second mat at 15% off.</li>
+        <li><b>Test it:</b> run it for 4 weeks and compare Online Store AOV and conversion rate against the $39.35 baseline.</li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="drawer-col">
+    <span class="hint">Live preview · tap + / Add to try the goals</span>
+    <aside class="drawer" aria-label="Cart drawer preview">
+      <div class="announce">🛁 Hand-poured in Sydney · Orders before 2pm ship same day</div>
+      <div class="dhead"><h3>Your cart <span id="count" style="font-family:var(--body);font-size:14px;color:var(--muted)"></span></h3><span class="x" aria-hidden="true">×</span></div>
+      <div class="prog">
+        <p class="prog-msg" id="msg" aria-live="polite"></p>
+        <div class="bar"><div class="fill" id="fill"></div>
+          <span class="ms" id="ms1" style="left:66.6%">🚚</span>
+          <span class="ms" id="ms2" style="left:100%">🎁</span>
+        </div>
+        <div class="mslabels"><span style="left:66.6%">Free shipping<br>$50</span><span style="left:96%">Free gift<br>$75</span></div>
+      </div>
+      <div class="items" id="items"></div>
+      <div id="swap"></div>
+      <div class="upsell">
+        <div class="uhead"><h4>Little ones also love</h4>
+          <div class="navs"><button class="navbtn" id="prev" aria-label="Previous suggestions">‹</button><button class="navbtn" id="next" aria-label="More suggestions">›</button></div></div>
+        <div class="track" id="track"></div>
+      </div>
+      <div class="foot">
+        <div class="sum"><span>Subtotal</span><span id="sub"></span></div>
+        <div class="sum"><span>Shipping</span><span id="ship"></span></div>
+        <div class="sum total"><span>Total</span><span id="tot"></span></div>
+        <button class="btn checkout" id="co">Checkout securely →</button>
+        <div class="trust"><span>🐝 Natural beeswax</span><span>✓ Food-grade pigments</span><span>🇦🇺 Made in Sydney</span></div>
+        <p class="review"><b>★★★★★</b> "The only bath crayons that don't stain our tub. Miss 3 is obsessed!" · Loved by 5,000+ Aussie families</p>
+      </div>
+    </aside>
+    <button class="reset" id="reset">Reset example cart</button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const SHIP_AT=50, GIFT_AT=75, SHIP_COST=9.95;
+const P={
+  bc:{n:"Beeswax Bath Crayons",p:21.95,e:"🖍️",bg:"#C7E7AF",m:"Hand-poured in Sydney"},
+  br:{n:"Bath Colour Rocks",p:17.95,e:"🪨",bg:"#9AD1D4",m:"Colours the bath water"},
+  kit:{n:"Bath Artistry Kit",p:36.95,e:"🎨",bg:"#FFF9DA",m:"Crayons + rocks, gift boxed"},
+  ec:{n:"Eco Friendly Beeswax Crayons",p:15.95,e:"✏️",bg:"#F6D7B0",m:"For paper & play"},
+  bl:{n:"Bee-Long Beeswax Crayons",p:19.95,e:"🐝",bg:"#F3E39B",m:"Toy award runner-up"},
+  cb:{n:"Beeswax Crayon Bundle",p:34.95,e:"🎁",bg:"#C7E7AF",m:"Paper + bath crayons"},
+  mat:{n:"Seek N Spot Mat · Under the Sea",p:24.95,e:"🐠",bg:"#9AD1D4",m:"A3 mat, 8 markers, canvas bag"},
+  mat2:{n:"Seek N Spot Mat · Dinosaurs",p:24.95,e:"🦕",bg:"#C7E7AF",m:"A3 mat, 8 markers, canvas bag"},
+  pens:{n:"Replacement Mat Pens",p:9.95,e:"🖊️",bg:"#E3D7F3",m:"For the couch-cushion casualties"},
+  adv:{n:"Colourful Adventure · Dinos & Trucks",p:44.95,e:"🚚",bg:"#F6D7B0",m:"Crayons, mat + colouring book"}
+};
+const START={bc:1,br:1};
+let cart={...START};
+const $=id=>document.getElementById(id);
+const money=v=>"$"+v.toFixed(2);
+const subtotal=()=>Object.entries(cart).reduce((s,[k,q])=>s+P[k].p*q,0);
+
+function suggestions(){
+  const has=k=>cart[k]>0, out=[];
+  const push=(k,why)=>{if(!has(k)&&!out.find(o=>o.k===k))out.push({k,why})};
+  const sub=subtotal();
+  if(has("mat")||has("mat2")) push("pens","Spare markers for when they go walkabout");
+  if(!has("mat")&&!has("mat2")) push("mat","Mess-free play out of the bath too");
+  if(has("mat")) push("mat2","Collect another design");
+  if(has("bc")||has("kit")) push("br","Colour the whole bath");
+  if(has("ec")||has("bl")) push("bc","Same crayons, made for the tub");
+  push("bl","Our award runner-up crayons");
+  if(sub>=GIFT_AT) push("adv","A ready-made gift for Christmas");
+  push("ec","Chunky crayons for little hands");
+  return out.slice(0,4);
+}
+
+function swapOffer(){
+  if(cart.bc>0&&cart.br>0) return {from:["bc","br"],to:"kit",save:P.bc.p+P.br.p-P.kit.p};
+  if(cart.bc>0&&cart.ec>0) return {from:["bc","ec"],to:"cb",save:P.bc.p+P.ec.p-P.cb.p};
+  return null;
+}
+
+function render(){
+  const sub=subtotal(), items=Object.entries(cart).filter(([,q])=>q>0);
+  const n=items.reduce((s,[,q])=>s+q,0)+(sub>=GIFT_AT?1:0);
+  $("count").textContent=n?`(${n})`:"";
+  const pct=Math.min(sub/GIFT_AT*100,100);
+  $("fill").style.width=pct+"%";
+  $("ms1").classList.toggle("on",sub>=SHIP_AT);
+  $("ms2").classList.toggle("on",sub>=GIFT_AT);
+  $("msg").innerHTML = !items.length ? "Add something lovely to start 🛁"
+    : sub<SHIP_AT ? `You're <em>${money(SHIP_AT-sub)}</em> away from free shipping 🚚`
+    : sub<GIFT_AT ? `Free shipping unlocked! Add <em>${money(GIFT_AT-sub)}</em> for a free marker pack 🎁`
+    : `You've unlocked it all! Free shipping + free markers 🎉`;
+
+  let h=items.map(([k,q])=>`<div class="item"><div class="thumb" style="background:${P[k].bg}">${P[k].e}</div>
+    <div><div class="name">${P[k].n}</div><div class="meta">${P[k].m}</div>
+    <div class="qty"><button aria-label="Remove one ${P[k].n}" data-d="${k}">−</button><span>${q}</span><button aria-label="Add one ${P[k].n}" data-a="${k}">+</button></div></div>
+    <div class="price">${money(P[k].p*q)}</div></div>`).join("");
+  if(sub>=GIFT_AT) h+=`<div class="item gift-row"><div class="thumb">🖊️</div><div><div class="name">Washable Marker 8-Pack</div><div class="meta"><span class="free-tag">Free gift</span> Thanks for shopping small 💚</div></div><div class="price">$0.00<s>$9.95</s></div></div>`;
+  $("items").innerHTML=h||`<p class="meta" style="padding:16px 0;text-align:center;color:var(--muted)">Your cart is empty</p>`;
+
+  const s=swapOffer();
+  $("swap").innerHTML=s?`<div class="swap"><p>💡 <b>Make it a ${P[s.to].n}</b> and save ${money(s.save)}. Same goodies, in a gift-ready box.</p><button class="btn sm" id="doSwap">Swap</button></div>`:"";
+  if(s) $("doSwap").onclick=()=>{s.from.forEach(k=>{cart[k]--;if(!cart[k])delete cart[k]});cart[s.to]=(cart[s.to]||0)+1;toast(`Swapped! You saved ${money(s.save)}`);render()};
+
+  $("track").innerHTML=suggestions().map(({k,why})=>`<div class="card"><div class="thumb" style="background:${P[k].bg}">${P[k].e}</div>
+    <div><div class="t">${P[k].n}</div><div class="why">${why}</div><div class="row"><b>${money(P[k].p)}</b><button data-a="${k}">+ Add</button></div></div></div>`).join("");
+
+  const ship=!items.length?0:sub>=SHIP_AT?0:SHIP_COST;
+  $("sub").textContent=money(sub);
+  $("ship").textContent=!items.length?"–":ship?money(ship):"FREE";
+  $("tot").textContent=money(sub+ship);
+}
+let lastSub=subtotal();
+function after(){const s=subtotal();
+  if(lastSub<SHIP_AT&&s>=SHIP_AT&&s<GIFT_AT) toast("🚚 Free shipping unlocked!");
+  if(lastSub<GIFT_AT&&s>=GIFT_AT) toast("🎁 Free marker pack added!");
+  lastSub=s;render()}
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-a]"),d=e.target.closest("[data-d]");
+  if(a){cart[a.dataset.a]=(cart[a.dataset.a]||0)+1;after()}
+  if(d){const k=d.dataset.d;cart[k]--;if(cart[k]<=0)delete cart[k];after()}
+});
+$("next").onclick=()=>$("track").scrollBy({left:240,behavior:"smooth"});
+$("prev").onclick=()=>$("track").scrollBy({left:-240,behavior:"smooth"});
+$("reset").onclick=()=>{cart={...START};lastSub=subtotal();render()};
+$("co").onclick=()=>toast("This is a preview. Checkout happens in Shopify");
+let tt;function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("show"),2200)}
+render();
+</script>
