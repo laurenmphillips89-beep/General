@@ -17,5 +17,5 @@ Adds to the slide-out cart drawer:
 | `theme/original/` | Untouched copies of `cart-form.liquid` and `cart.json`, for rolling back |
 
 ## Needs, outside the theme
-- A product with handle `free-marker-pack-gift`, price $0, compare-at $9.95, active on the Online Store.
+- A product with handle `free-crayons-gift`, price $0, compare-at $15.95, active on the Online Store.
 - A $0 shipping rate on orders $75+ in Settings > Shipping and delivery.

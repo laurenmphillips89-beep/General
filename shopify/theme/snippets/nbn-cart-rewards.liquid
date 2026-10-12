@@ -10,8 +10,8 @@
 
 {%- liquid
   assign gift_at = 10000
-  assign gift_handle = 'free-marker-pack-gift'
-  assign gift_name = 'free marker pack'
+  assign gift_handle = 'free-crayons-gift'
+  assign gift_name = 'free set of crayons'
 
   assign ship_at = settings.cart_free_shipping_amount | default: 75 | times: 100
   assign gift_product = all_products[gift_handle]
