@@ -193,7 +193,7 @@ const IP = {
       { n:"Barbie™ Bath Colour Rocks", d:"Drop one in and watch the water turn pink, purple or teal. Pure bath magic.", made:"Food-grade pigments", local:false },
       { n:"Barbie™ Bath Artistry Kit", d:"Bath crayons and colour rocks together in one gift-ready box. Birthday sorted.", made:"Gift-ready box", local:false },
       { n:"Barbie™ Beeswax Crayons", d:"Chunky, natural beeswax crayons that suit little hands and glide on paper.", made:"Natural beeswax", local:true },
-      { n:"Barbie™ Silicone Mat", d:"A reusable Barbie colouring mat that wipes clean, ready for the next masterpiece.", made:"Reusable + wipe clean", local:false },
+      { n:"Barbie™ Silicone Mat", d:"A reusable Barbie colouring mat that wipes clean, in its own Barbie canvas bag. Handbag-ready for cafés and car trips.", made:"Reusable + wipe clean", local:false },
       { n:"Dream & Create Kit", d:"Crayons, mat, colouring book and bath rocks in one. Creative play from the kitchen table to the bath.", made:"Best value", local:false }
     ],
     kitName: 'The Dream &amp; Create <em>Kit</em>',
@@ -216,7 +216,7 @@ const IP = {
       { n:"Hot Wheels™ Bath Colour Rocks", d:"Drop, fizz, zoom. The water turns blue, orange or green in seconds.", made:"Food-grade pigments", local:false },
       { n:"Hot Wheels™ Bath Artistry Kit", d:"Bath crayons and colour rocks together in one gift-ready box. Pit stop for presents.", made:"Gift-ready box", local:false },
       { n:"Hot Wheels™ Beeswax Crayons", d:"Chunky, natural beeswax crayons that suit little hands and won't snap at the first corner.", made:"Natural beeswax", local:true },
-      { n:"Hot Wheels™ Silicone Mat", d:"A reusable Hot Wheels colouring mat that wipes clean. Great for car trips.", made:"Reusable + wipe clean", local:false },
+      { n:"Hot Wheels™ Silicone Mat", d:"A reusable Hot Wheels colouring mat that wipes clean, in its own Hot Wheels canvas bag. Pit-stop ready for car trips.", made:"Reusable + wipe clean", local:false },
       { n:"Supercharge Creative Kit", d:"Crayons, mat, colouring book and bath rocks in one turbo-charged box. Hours of quiet. (Well, quieter.)", made:"Best value", local:false }
     ],
     kitName: 'The Supercharge <em>Creative Kit</em>',
@@ -241,7 +241,7 @@ function render(key){
   document.getElementById("legal-line").textContent = d.legal;
   const kitBits = [
     ["Beeswax crayons","Natural, chunky and made for little hands"],
-    [`${d.name} silicone mat`,"Reusable, wipe-clean, pops in the handbag"],
+    [`${d.name} silicone mat`,`Reusable and wipe-clean, with its own ${d.name} canvas bag`],
     ["Colouring book",`${d.name} pages to fill, again and again`],
     ["Bath colour rocks","Colour the bath water so the fun carries on at bath time"]
   ];
