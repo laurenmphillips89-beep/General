@@ -167,7 +167,7 @@ details p{margin-top:8px;color:var(--muted);font-size:15px}
 <div class="note band"><div class="in">
   <span>Prices, photos and official logos are placeholders</span>
   <span>Colours are Pantone matches to confirm against the Mattel style guide</span>
-  <span>Kit contents are my best guess, please check</span>
+  <span>Kits: crayons, mat, bath rocks, plus colouring book (confirm)</span>
 </div></div>
 
 <main id="page"></main>
@@ -194,7 +194,7 @@ const IP = {
       { n:"Barbie™ Bath Artistry Kit", d:"Bath crayons and colour rocks together in one gift-ready box. Birthday sorted.", made:"Gift-ready box", local:false },
       { n:"Barbie™ Beeswax Crayons", d:"Chunky, natural beeswax crayons that suit little hands and glide on paper.", made:"Natural beeswax", local:true },
       { n:"Barbie™ Silicone Mat", d:"A reusable Barbie colouring mat that wipes clean, ready for the next masterpiece.", made:"Reusable + wipe clean", local:false },
-      { n:"Dream & Create Kit", d:"Crayons, mat and colouring book in one. A whole afternoon of quiet, happy colouring.", made:"Best value", local:false }
+      { n:"Dream & Create Kit", d:"Crayons, mat, colouring book and bath rocks in one. Creative play from the kitchen table to the bath.", made:"Best value", local:false }
     ],
     kitName: 'The Dream &amp; Create <em>Kit</em>',
     kitSub: "Everything your little artist needs to dream big, in one box. It's the present that keeps them busy long after the wrapping paper's gone.",
@@ -217,7 +217,7 @@ const IP = {
       { n:"Hot Wheels™ Bath Artistry Kit", d:"Bath crayons and colour rocks together in one gift-ready box. Pit stop for presents.", made:"Gift-ready box", local:false },
       { n:"Hot Wheels™ Beeswax Crayons", d:"Chunky, natural beeswax crayons that suit little hands and won't snap at the first corner.", made:"Natural beeswax", local:true },
       { n:"Hot Wheels™ Silicone Mat", d:"A reusable Hot Wheels colouring mat that wipes clean. Great for car trips.", made:"Reusable + wipe clean", local:false },
-      { n:"Supercharge Creative Kit", d:"Crayons, mat and colouring book in one turbo-charged box. Hours of quiet. (Well, quieter.)", made:"Best value", local:false }
+      { n:"Supercharge Creative Kit", d:"Crayons, mat, colouring book and bath rocks in one turbo-charged box. Hours of quiet. (Well, quieter.)", made:"Best value", local:false }
     ],
     kitName: 'The Supercharge <em>Creative Kit</em>',
     kitSub: "Fuel for little imaginations. Everything they need to design their dream ride, in one box that's ready to wrap.",
@@ -242,7 +242,8 @@ function render(key){
   const kitBits = [
     ["Beeswax crayons","Natural, chunky and made for little hands"],
     [`${d.name} silicone mat`,"Reusable, wipe-clean, pops in the handbag"],
-    ["Colouring book",`${d.name} pages to fill, again and again`]
+    ["Colouring book",`${d.name} pages to fill, again and again`],
+    ["Bath colour rocks","Colour the bath water so the fun carries on at bath time"]
   ];
   const rot = (a,n)=>a.slice(n).concat(a.slice(0,n));
   document.getElementById("page").innerHTML = `
